@@ -29,6 +29,7 @@ import (
 	"github.com/opentofu/opentofu/internal/logging"
 	"github.com/opentofu/opentofu/internal/tfdiags"
 	"github.com/opentofu/opentofu/internal/tofu"
+	"github.com/opentofu/opentofu/version"
 
 	uuid "github.com/hashicorp/go-uuid"
 	"golang.org/x/oauth2"
@@ -314,12 +315,12 @@ func (c *LoginCommand) outputDefaultTFELoginSuccess(dispHostname string) {
 
 func (c *LoginCommand) outputDefaultTFCLoginSuccess() {
 	c.Ui.Output(c.Colorize().Color(strings.TrimSpace(`
-[green][bold]Success![reset] [bold]Logged in to Terraform Cloud[reset]
+[green][bold]Success![reset] [bold]Logged in to cloud backend[reset]
 ` + "\n")))
 }
 
 func (c *LoginCommand) logMOTDError(err error) {
-	log.Printf("[TRACE] login: An error occurred attempting to fetch a message of the day for Terraform Cloud: %s", err)
+	log.Printf("[TRACE] login: An error occurred attempting to fetch a message of the day for cloud backend: %s", err)
 }
 
 // Help implements cli.Command.
@@ -648,6 +649,10 @@ func (c *LoginCommand) interactiveGetTokenByUI(hostname svchost.Hostname, credsC
 		Token:    token,
 		Headers:  make(http.Header),
 	}
+
+	// Update user-agent from 'go-tfe' to opentofu
+	cfg.Headers.Set("User-Agent", httpclient.OpenTofuUserAgent(version.String()))
+
 	client, err := tfe.NewClient(cfg)
 	if err != nil {
 		diags = diags.Append(fmt.Errorf("Failed to create API client: %w", err))

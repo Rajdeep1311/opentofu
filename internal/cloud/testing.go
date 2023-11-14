@@ -58,7 +58,7 @@ var (
 	}
 )
 
-// mockInput is a mock implementation of terraform.UIInput.
+// mockInput is a mock implementation of tofu.UIInput.
 type mockInput struct {
 	answers map[string]string
 }
@@ -437,7 +437,7 @@ func testServerWithSnapshotsEnabled(t *testing.T, enabled bool) *httptest.Server
 			t.Fatal(err)
 		}
 
-		w.Header().Set("content-type", "application/json")
+		w.Header().Set("content-type", tfe.ContentTypeJSONAPI)
 		w.Header().Set("content-length", strconv.FormatInt(int64(len(fakeBodyRaw)), 10))
 
 		switch r.Method {

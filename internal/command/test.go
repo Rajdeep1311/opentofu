@@ -61,7 +61,9 @@ Options:
 
   -no-color             If specified, output won't contain any color.
 
-  -test-directory=path	Set the OpenTofu test directory, defaults to "tests".    
+  -test-directory=path  Set the OpenTofu test directory, defaults to "tests". When set, the
+                        test command will search for test files in the current directory and
+                        in the one specified by the flag.
 
   -var 'foo=bar'        Set a value for one of the input variables in the root
                         module of the configuration. Use this option more than
@@ -1092,7 +1094,7 @@ func prepareInputVariablesForAssertions(config *configs.Config, run *moduletest.
 	}
 
 	// We've gathered all the values we have, let's convert them into
-	// terraform.InputValues so they can be passed into the Terraform graph.
+	// tofu.InputValues so they can be passed into the Terraform graph.
 
 	inputs := make(tofu.InputValues, len(variables))
 	var diags tfdiags.Diagnostics
@@ -1103,7 +1105,7 @@ func prepareInputVariablesForAssertions(config *configs.Config, run *moduletest.
 	}
 
 	// Next, we're going to apply any default values from the configuration.
-	// We do this after the conversion into terraform.InputValues, as the
+	// We do this after the conversion into tofu.InputValues, as the
 	// defaults have already been converted into cty.Value objects.
 
 	for name, variable := range config.Module.Variables {
